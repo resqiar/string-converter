@@ -1,6 +1,9 @@
-use rand::prelude::*;
 use std::env;
 use std::fs;
+
+use crate::conversion::random_cases::to_random_cases;
+
+mod conversion;
 
 fn main() {
     // Collect the arguments from the cli invocations
@@ -20,7 +23,7 @@ fn main() {
     let raw_str: String = read_file(&file_path.to_string());
 
     // format with random capital character
-    let formatted_str: String = convert_to_random_uppercase(&raw_str);
+    let formatted_str: String = to_random_cases(&raw_str);
 
     println!("{}", formatted_str);
 }
@@ -28,36 +31,4 @@ fn main() {
 fn read_file(file_path: &String) -> String {
     let file_content: String = fs::read_to_string(file_path).expect("File not found");
     return file_content;
-}
-
-fn convert_to_random_uppercase(input: &String) -> String {
-    // Stored on the heap (dynamic size)
-    let mut converted_str: String = String::new();
-
-    for char in input.chars() {
-        // If the char for current iteration is not an alphabetic,
-        // just push the char and continue the loop;
-        if !char.is_alphabetic() {
-            converted_str.push(char);
-            continue;
-        }
-
-        // Randomize if the char should be uppercase or not.
-        // The value is either 0 or 1.
-        // 0 means to_lowercase,
-        // 1 means to_uppercase.
-        let rand_ratio: i32 = rand::thread_rng().gen_range(0..=1);
-
-        // If the value is 0, convert the character into to_lowercase
-        if rand_ratio == 0 {
-            converted_str.push(char.to_ascii_lowercase());
-        }
-        // If not (means 1) then convert the character into to_uppercase
-        else {
-            converted_str.push(char.to_ascii_uppercase());
-        }
-    } // converted_str is auto-dropped by rust here
-
-    // Return the converted_str
-    return converted_str;
 }
